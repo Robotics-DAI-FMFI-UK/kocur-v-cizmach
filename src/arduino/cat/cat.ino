@@ -14,14 +14,14 @@
 
 // pin connections:
 // servos:
-//   left front upper:  D9
-//   left front lower:  D8
-//   left back upper:   D10
-//   left back lower:   D11
-//   right front upper: D7
-//   right front lower: D6
-//   right back upper:  D5
-//   right back lower:  D3
+//    D3   Right back 2 (RB2)
+//    D5   Right back 1 (RB1)
+//    D6   Right front 2 (RF2)
+//    D7   Right front 1 (RF1)
+//    D8   Left front 2 (LF2)
+//    D9   Left front 1 (LF1)
+//    D10  Left back 1 (LB1)
+//    D11  Left back 2 (LB2)
 // bluetooth:
 //    BT TX:  D2
 //    BT RX:  D4
@@ -207,266 +207,6 @@ void position_90()
       legs[i].write(legv[i]);
 }
 
-void legs_up()
-{
-    for (int i = 0; i < 8; i++)
-      legv[i] = australian[i];
-      
-    for (int i = 0; i < 8; i++)
-      legs[i].write(legv[i]);
-}
-
-void legs_down()
-{
-    for (int i = 0; i < 8; i++)
-      legv[i] = initial[i];
-      
-    for (int i = 0; i < 8; i++)
-      legs[i].write(legv[i]);
-}
-
-// walking legs down
-
-void movementDL()
-{
-  legs[LB2].write(90);
-  delay(usual_delay);
-  legs[LB1].write(95);
-  delay(usual_delay);
-  legs[LB2].write(5);
-  delay(usual_delay);
-
-  legs[LF2].write(90);
-  delay(usual_delay);
-  legs[LF1].write(5);
-  delay(usual_delay);
-  legs[LF2].write(175);
-  delay(usual_delay);
-  calibrationD();
-}
-
-void movementDR()
-{
-  legs[RB2].write(90);
-  delay(usual_delay);
-  legs[RB1].write(105);
-  delay(usual_delay);
-  legs[RB2].write(175);
-  delay(usual_delay);
-
-  legs[RF2].write(90);
-  delay(usual_delay);
-  legs[RF1].write(175);
-  delay(usual_delay);
-  legs[RF2].write(5);
-  delay(usual_delay);
-  calibrationD();
-}
-
-void movementZL()
-{
-  legs[LF2].write(90);
-  delay(usual_delay);
-  legs[LF1].write(70);
-  delay(usual_delay);
-  legs[LF2].write(175);
-  delay(usual_delay);
-  
-  legs[LB2].write(90);
-  delay(usual_delay);
-  legs[LB1].write(175);
-  delay(usual_delay);
-  legs[LB2].write(5);
-  delay(usual_delay);
-  calibrationZ();
-}
-
-void movementZR()
-{
-  legs[RF2].write(90);
-  delay(usual_delay);
-  legs[RF1].write(100);
-  delay(usual_delay);
-  legs[RF2].write(5);
-  delay(usual_delay);
-  
-  legs[RB2].write(90);
-  delay(usual_delay);
-  legs[RB1].write(5);
-  delay(usual_delay);
-  legs[RB2].write(175);
-  delay(usual_delay);
-  calibrationZ();
-}
-
-// walking legs up
-
-void movementDL_LU()
-{
-  legs[LB2].write(90);
-  delay(usual_delay);
-  legs[LB1].write(95);
-  delay(usual_delay);
-  legs[LB2].write(175);
-  delay(usual_delay);
-
-  legs[LF2].write(90);
-  delay(usual_delay);
-  legs[LF1].write(175);
-  delay(usual_delay);
-  legs[LF2].write(5);
-  delay(usual_delay);
-  calibrationD();
-}
-
-void movementDR_LU()
-{
-  legs[RB2].write(90);
-  delay(usual_delay);
-  legs[RB1].write(105);
-  delay(usual_delay);
-  legs[RB2].write(5);
-  delay(usual_delay);
-
-  legs[RF2].write(90);
-  delay(usual_delay);
-  legs[RF1].write(175);
-  delay(usual_delay);
-  legs[RF2].write(175);
-  delay(usual_delay);
-  calibrationD();
-}
-
-void movementZL_LU()
-{
-  legs[LF2].write(90);
-  delay(usual_delay);
-  legs[LF1].write(70);
-  delay(usual_delay);
-  legs[LF2].write(5);
-  delay(usual_delay);
-  
-  legs[LB2].write(90);
-  delay(usual_delay);
-  legs[LB1].write(175);
-  delay(usual_delay);
-  legs[LB2].write(175);
-  delay(usual_delay);
-  calibrationZ();
-}
-
-void movementZR_LU()
-{
-  legs[RF2].write(90);
-  delay(usual_delay);
-  legs[RF1].write(100);
-  delay(usual_delay);
-  legs[RF2].write(175);
-  delay(usual_delay);
-  
-  legs[RB2].write(90);
-  delay(usual_delay);
-  legs[RB1].write(5);
-  delay(usual_delay);
-  legs[RB2].write(5);
-  delay(usual_delay);
-  calibrationZ();
-}
-
-// ---
-
-void Xattack()
-{
-  legs[RF1].write(175);
-  legs[LF1].write(5);
-  legs[RB1].write(90);
-  legs[LB1].write(90);
-  delay(usual_delay);
-  legs[RF2].write(90);
-  legs[LF2].write(90);
-  delay(usual_delay);
-  legs[RB1].write(5);
-  legs[LB1].write(175);
-  delay(usual_delay * 3);
-  legs[RF2].write(175);
-  legs[LF2].write(5);
-  delay(usual_delay * 2);
-}
-
-// lay down
-void cube() 
-{
-  for (int i = 4; i < 8; i++)
-    legv[i] = 90;
-
-  for (int i = 0; i < 8; i++)
-    legs[i].write(legv[i]);
-}
-
-void safe()
-{
-  if (upside_down) safe_LU();
-  else safe_LD();
-}
-
-// turn around
-void safe_LU()
-{
-  legs[LF1].write(5);
-  legs[RF1].write(175);
-  delay(safe_delay);
-  legs[LF2].write(5);
-  legs[RF2].write(175);
-  delay(safe_delay);
-  legs[LB1].write(50);
-  legs[RB1].write(130);
-  delay(safe_delay);
-  legs[LB2].write(175);
-  legs[RB2].write(5);
-  delay(safe_delay);
-  legs[LF2].write(175);
-  legs[RF2].write(5);
-  delay(safe_delay);
-  legs[LB1].write(175);
-  legs[RB1].write(5);
-  delay(safe_delay);
-}
-
-void safe_LD()
-{
-  legs[LF1].write(5);
-  legs[RF1].write(175);
-  delay(safe_delay);
-  legs[LF2].write(175);
-  legs[RF2].write(5);
-  delay(safe_delay);
-  legs[LB1].write(50);
-  legs[RB1].write(130);
-  delay(safe_delay);
-  legs[LB2].write(5);
-  legs[RB2].write(175);
-  delay(safe_delay);
-  legs[LF2].write(5);
-  legs[RF2].write(175);
-  delay(safe_delay);
-  legs[LB1].write(175);
-  legs[RB1].write(5);
-  delay(safe_delay);
-}
-
-void calibration()
-{
-  for (int i = 0; i < 8; i++)
-    legv[i] = initial[i];
-
-  if (upside_down) 
-    for(int i = 4; i < 8; i++)
-      legv[i] = 180 - legv[i];
-
-  for (int i = 0; i < 8; i++)
-    legs[i].write(legv[i]);
-}
-
 void reset_position()
 {
     for (int i = 0; i < 8; i++)
@@ -478,134 +218,22 @@ void reset_position()
     head.write(90);
 }
 
-void calibrationD()
-{
-  static uint8_t angles[] = {50, 150, 130, 30};
-  for (int i = 0; i < 4; i++)
-  legv[i] = angles[i];
-
-  for (int i = 0; i < 4; i++)
-    legs[i].write(legv[i]);
-}
-
-void calibrationZ()
-{
-  static uint8_t angles[] = {30, 130, 130, 50};
-  for (int i = 0; i < 4; i++)
-  legv[i] = angles[i];
-
-  for (int i = 0; i < 4; i++)
-    legs[i].write(legv[i]);
-}
-
 // walking
 
 void forward()
 {
-  if (upside_down) forward_LU();
-  else forward_LD();
 }
 
 void backward()
 {
-  if (upside_down) backward_LU();
-  else backward_LD();
 }
 
 void right()
 {
-  if (upside_down) right_LU();
-  else right_LD();
 }
 
 void left()
 {
-  if (upside_down) left_LU();
-  else left_LD();
-}
-
-// walking legs down
-
-void forward_LD()
-{
-  calibrationD();
-  delay(usual_delay);
-  movementDL();
-  delay(usual_delay);
-  movementDR();
-  delay(usual_delay);
-}
-
-void backward_LD()
-{
-  calibrationZ();
-  delay(usual_delay);
-  movementZL();
-  delay(usual_delay);
-  movementZR();
-  delay(usual_delay);
-}
-
-void right_LD()
-{
-  calibrationZ();
-  delay(usual_delay);
-  movementZR();
-  calibrationD();
-  delay(usual_delay);
-  movementDL();
-}
-
-void left_LD()
-{
-  calibrationZ();
-  delay(usual_delay);
-  movementZL();
-  calibrationD();
-  delay(usual_delay);
-  movementDR();
-}
-
-// walking legs up
-
-void forward_LU()
-{
-  calibrationD();
-  delay(usual_delay);
-  movementDL_LU();
-  delay(usual_delay);
-  movementDR_LU();
-  delay(usual_delay);
-}
-
-void backward_LU()
-{
-  calibrationZ();
-  delay(usual_delay);
-  movementZL_LU();
-  delay(usual_delay);
-  movementZR_LU();
-  delay(usual_delay);
-}
-
-void right_LU()
-{
-  calibrationZ();
-  delay(usual_delay);
-  movementZR_LU();
-  calibrationD();
-  delay(usual_delay);
-  movementDL_LU();
-}
-
-void left_LU()
-{
-  calibrationZ();
-  delay(usual_delay);
-  movementZL_LU();
-  calibrationD();
-  delay(usual_delay);
-  movementDR_LU();
 }
 
 char read_latest_char() 
@@ -632,39 +260,7 @@ void refresh_gyro()
 void react_to_gyro()
 {
   refresh_gyro();
-
-  if (!upside_down && (abs(roll) > 172)) 
-  {
-    legs_up();
-    upside_down = 1;
-    serial_println_flash(PSTR("LU"));
-  }
-  else if (upside_down && (abs(roll) < 8))
-  {
-    legs_down();
-    upside_down = 0;
-    serial_println_flash(PSTR("LD"));
-  }
-    
-  if (auto_cube == 1){
-    for (int i = 0; i < 2; i++)
-    {
-      if (((roll > 34) && (roll < 56)) || ((roll > -56) && (roll < -34))){
-        cube();
-        serial_print_flash(PSTR("."));
-        delay(safe_delay);
-      }
-    }
-  }
-  if (auto_safe == 1){
-    if ((roll > 169) || (roll < -169)){
-      delay(safe_delay);
-      safe();
-      calibration();
-      serial_print_flash(PSTR("#"));
-      delay(safe_delay);
-    }
-  }
+  // your code here
 }
 
 void both_modes(char c)
@@ -882,38 +478,25 @@ void control_mode(char c)
   else if (c == '2') backward();
   else if (c == '3') right();
   else if (c == '4') left();
-  else if (c == '5') {
-    move_head();
-    Xattack();
-    calibration();
+  else if (c == '5') 
+  {
+    //available
   }
-  else if (c == '6'){
-    if (laying == 1){
-      calibration();
-      serial_println_flash(PSTR("stand-up"));
-      laying = 0;
-    }
-    else {
-      cube();
-      serial_println_flash(PSTR("lay-down"));
-      laying = 1;
-    }
-  }
-  else if (c == '7'){
-    safe();
-    calibration();
+  else if (c == '6')
+  {
+    //available
+  }  
+  else if (c == '7')
+  {
+    //available
   }
   else if (c == '0')
   {
-    auto_cube ^= 1;
-    serial_print_flash(PSTR("auto cube: "));
-    serial_println_num(auto_cube);
+    //available
   }
   else if (c == '8')
   {
-    auto_safe ^= 1;
-    serial_print_flash(PSTR("auto safe: "));
-    serial_println_num(auto_safe);
+    //available
   }
   else if (c == 'E') 
   {
@@ -1330,7 +913,7 @@ void undo_step()
       legv[i] = seq[seq_length - 1][i];
       legs[i].write(legv[i]);
     }
-  else calibration();
+  else reset_position();
 }
 
 int8_t ask_for_slot_num()
