@@ -1,7 +1,7 @@
 # kucur-v-cizmach
 Cat-like arduino robot with 4 legs
 
-![kocúr v čižmách](kocur_v_cizmach.jpg)
+![kocúr v čižmách](Kocur_v_cizmach.jpg)
 
 
 list of parts:
