@@ -124,6 +124,66 @@ static uint16_t one_bit_duration;
 static uint16_t one_bit_write_duration;
 static uint16_t half_of_one_bit_duration;
 static uint8_t ignore_batteries = 0;
+static volatile int touch;
+
+//------------------------- place your reactions code here --------------------
+void react_to_gyro()
+{
+  refresh_gyro();
+  // your code here
+}
+
+void react_to_multitouch(uint8_t num_touches)
+{
+    switch (num_touches)
+    {
+      case 2: //double-touch
+              down_to_earth();
+              break;
+      case 3: //tripple-touch
+              sit_down();
+              break;
+      case 4: //quadruple-touch
+              reset_position();
+              break;
+      case 5: //5-touches :-)
+              forward();
+              break;
+      case 6: //6-touches :-)
+              backward();
+              break;
+      case 7: //happy 7-touches
+              left();
+              break;
+      case 8: //gothic 8 touches   
+              right();
+              break;    
+      case 9: //epic 9 touches switch ultrasonic
+              ultrasonic = 1 - ultrasonic;
+              break;                
+      case 10: //tenth finger moves the head
+              move_head();
+              break;                
+    }
+}
+
+void react_to_touch()
+{
+  if (quiet) toggle_quiet();
+  mp3_play(current_song);
+}
+
+void react_to_tap()
+{
+  toggle_quiet();
+}
+
+void react_to_mic()
+{
+  move_head();
+  forward();
+}
+//----------------------------------- end of reactions code --------------------------------
 
 void setup() 
 {
@@ -181,8 +241,6 @@ void setup()
   step_size = 1;
   sound_greeting();
     
-  mp3_play(1);
-  delay(10);
   mp3_set_volume(volume);
   
   if (load_autostart()) play_sequence(1);
@@ -219,21 +277,119 @@ void reset_position()
 }
 
 // walking
+const uint8_t len_fwdwalk = 15;
+const uint8_t fwdwalk[] PROGMEM = {  75,75,105,105,105,105,75,75,1,
+                                     100,100,80,80,135,135,45,45,1,
+                                     70,90,100,80,165,145,25,45,1,
+                                     70,90,100,110,165,145,25,15,1,
+                                     70,90,100,145,165,145,25,90,1,
+                                     100,100,80,145,135,135,45,90,1,
+                                     100,100,90,145,135,135,35,90,1,
+                                     100,70,90,145,135,165,35,90,1,
+                                     100,40,90,145,135,90,35,90,1,
+                                     75,40,90,155,160,90,35,90,1,
+                                     45,40,90,155,90,90,35,90,1,
+                                     45,40,90,125,90,90,60,90,1,
+                                     45,25,90,135,90,105,60,80,1,
+                                     45,25,120,135,90,105,30,80,1,
+                                     45,25,150,135,90,105,90,80,1 };
+                                     
+void walk_from_memory(uint8_t dir, uint8_t *mem, int len)
+{      
+    int st[9];   
+    uint8_t stop_walking = 0;
+   
+    do {
+      char *m = mem;
+      if (dir == 0) m += (len * 9 - 9);
+      
+      for (int i = 0; i < len; i++)
+      {
+        if (Serial.available()) { stop_walking = 1; break; }
+        if (serial_available()) { stop_walking = 1; break; }
+        read_touch();
+        if (touch > 500) { stop_walking = 1; break; }
+          
+        for (int j = 0; j < 9; j++)
+        {
+          st[j] = (int)pgm_read_byte(m++);          
+        }
+        if (dir == 0) m -= 18;
+      
+        for (int k = 0; k < 100; k++)
+        {
+          for (int j = 0; j < 8; j++)        
+             legs[j].write(legv[j] + ((int)(st[j] - legv[j]) * k) / 100);      
+          delay(st[8]);
+        }
+        for (int j = 0; j < 8; j++)        
+          legv[j] = st[j];
+                
+        check_battery();
+      }
+    } while (!stop_walking);
+    
+    while (Serial.available()) Serial.read();
+    while (serial_available()) serial_read(); 
+    while (touch > 500) { read_touch();}
+}
 
 void forward()
-{
+{  
+  walk_from_memory(1, fwdwalk, len_fwdwalk);
 }
 
 void backward()
 {
+  walk_from_memory(0, fwdwalk, len_fwdwalk);
 }
+
+const uint8_t len_turnwalk = 5;
+const uint8_t turnleft[] PROGMEM = { 90,41,130,108,90,126,134,65,5,
+                                     35,77,130,128,80,126,134,32,5,
+                                     19,77,130,152,80,130,134,128,5,
+                                     43,39,163,139,30,21,165,84,5,
+                                     90,90,90,90,90,90,90,90,5 };
+
+const uint8_t turnright[] PROGMEM = { 50, 72, 90, 139, 46, 115, 90, 54, 5,
+                                     50, 52, 145, 103, 46, 148, 100, 54, 5,
+                                     50, 28, 161, 103, 46, 52, 100, 50, 5,                                     
+                                     17, 12, 137, 141, 15, 117, 150, 159, 5,
+                                     90,90,90,90,90,90,90,90,5 };
 
 void right()
 {
+  walk_from_memory(1, turnright, len_turnwalk);
 }
 
 void left()
 {
+  walk_from_memory(1, turnleft, len_turnwalk);  
+}
+
+const uint8_t position_down[] = { 5, 5, 175, 175, 175, 175, 5, 5 };
+const uint8_t position_sit[] = { 90, 5, 90, 175, 90, 175, 90, 5 };
+
+void position_from_memory(const uint8_t *m)
+{  
+  for (int k = 0; k < 100; k++)
+  {
+    for (int j = 0; j < 8; j++)        
+       legs[j].write(legv[j] + ((int)(m[j] - legv[j]) * k) / 100);
+    delay(3);
+  }
+  for (int j = 0; j < 8; j++)        
+     legv[j] = m[j];  
+}
+
+void down_to_earth()
+{  
+  position_from_memory(position_down);
+}
+
+void sit_down()
+{
+  position_from_memory(position_sit);
 }
 
 char read_latest_char() 
@@ -257,10 +413,13 @@ void refresh_gyro()
 #endif
 }
 
-void react_to_gyro()
+void toggle_quiet()
 {
-  refresh_gyro();
-  // your code here
+    if (quiet) mp3_set_volume(volume);
+    else mp3_set_volume(0);   
+    serial_print_flash(PSTR("music:"));
+    serial_println_num(quiet);
+    quiet = 1 - quiet;  
 }
 
 void both_modes(char c)
@@ -290,11 +449,7 @@ void both_modes(char c)
     position_90();
   else if (c == 'M')
   {
-    if (quiet) mp3_set_volume(volume);
-    else mp3_set_volume(0);   
-    serial_print_flash(PSTR("music:"));
-    serial_println_num(quiet);
-    quiet = 1 - quiet;
+    toggle_quiet();
   }
   else if ((c == 27) || (c == ':')) stop_melody();
   else if ((c == '<') || (c == '>'))
@@ -478,18 +633,9 @@ void control_mode(char c)
   else if (c == '2') backward();
   else if (c == '3') right();
   else if (c == '4') left();
-  else if (c == '5') 
-  {
-    //available
-  }
-  else if (c == '6')
-  {
-    //available
-  }  
-  else if (c == '7')
-  {
-    //available
-  }
+  else if (c == '5') down_to_earth(); 
+  else if (c == '6') sit_down();
+  else if (c == '7') move_head();
   else if (c == '0')
   {
     //available
@@ -548,20 +694,78 @@ void try_melodies(char c)
   }
 }
 
-void check_touch()
+void read_touch()
 {
   // read touch A6
   ADMUX = 0b01000110;  // select channel 6 and AVCC ref
   ADCSRA |= 64;  // start conversion
   while ((ADCSRA & 16) == 0); // wait for conversion to complete
   ADCSRA = 0b10010101; // clear the conversion complete signal for another time
-  int touch = ADCL;
-  touch |= (ADCH << 8);
+  touch = ADCL;
+  touch |= (ADCH << 8);  
+}
 
-  if (touch > 500)  
+void check_touch()
+{
+  read_touch();
+
+  static uint32_t touch_touched_time = 0;
+  static uint32_t touch_untouched_time = 0;
+  static uint32_t touch_last_touch_length = 0;
+  static uint8_t touch_multitouch = 0;
+
+#define  DOUBLETOUCH_MAX_DELAY_TIME  500
+#define  LONG_TOUCH_TAP_MIN_TIME     700
+#define  TOUCH_SINGLE_MAX_TIME       300
+  
+  if (touch > 500)
   {
-    Serial.println("touch");
-    delay(50);
+    if (touch_untouched_time)
+    {
+      touch_multitouch++;
+      touch_touched_time = millis();
+      touch_untouched_time = 0;
+    }    
+    else if (touch_touched_time == 0) touch_touched_time = millis();
+  }
+  else if (touch_touched_time)
+  {          
+      touch_untouched_time = millis();
+      touch_last_touch_length = millis() - touch_touched_time;
+      touch_touched_time = 0;
+  }
+  else if (touch_untouched_time)
+  {
+      if (millis() - touch_untouched_time > DOUBLETOUCH_MAX_DELAY_TIME)
+      {
+        touch_untouched_time = 0;          
+        if (touch_multitouch)
+        {
+          touch_multitouch++;
+          Serial.print(F("multi-touch "));
+          Serial.println(touch_multitouch);
+
+          for (int i = 0; i < touch_multitouch; i++)
+          {
+            tone2(440, 60); delay(90); 
+          }
+          react_to_multitouch(touch_multitouch);
+          touch_multitouch = 0;
+        }
+        else if (touch_last_touch_length > LONG_TOUCH_TAP_MIN_TIME) // long tap
+        {
+          Serial.println(F("tap"));
+          tone2(220, 150);
+          react_to_tap();
+        }
+        else if (touch_last_touch_length < TOUCH_SINGLE_MAX_TIME) // short touch
+        {
+          Serial.println(F("touch"));
+          tone2(880, 40);
+          react_to_touch();
+        }
+        touch_last_touch_length = 0;
+      }
   }
 }
 
@@ -577,13 +781,8 @@ void check_mic()
   int mic = ADCL;
   mic |= (ADCH << 8); 
   
-  if (last_mic && abs(mic - last_mic) > 200)
-  {
-    Serial.print("mic ");
-    Serial.print(last_mic);
-    Serial.print(" -> ");
-    Serial.println(mic);
-  }
+  if (last_mic && abs(mic - last_mic) > 100)
+     react_to_mic();
   last_mic = mic;
 }
 
@@ -664,11 +863,11 @@ void print_usage()
     serial_println_flash(PSTR(" 2: backward"));
     serial_println_flash(PSTR(" 3: right"));
     serial_println_flash(PSTR(" 4: left"));
-    serial_println_flash(PSTR(" 5: lift oponent"));
-    serial_println_flash(PSTR(" 6: lay down (cube)"));
-    serial_println_flash(PSTR(" 7: roll over (safe)"));
-    serial_println_flash(PSTR(" 0: switch auto cube"));
-    serial_println_flash(PSTR(" 8: switch auto safe"));  
+    serial_println_flash(PSTR(" 5: down"));
+    serial_println_flash(PSTR(" 6: sit"));
+    serial_println_flash(PSTR(" 7: look around"));
+    //serial_println_flash(PSTR(" 8: your option here"));  
+    //serial_println_flash(PSTR(" 0: your option here"));
   } 
   delay(150); 
   serial_println_flash(PSTR("Play the sequence: /"));
@@ -759,19 +958,23 @@ void play_sequence(uint8_t repete)
   do 
   {
     for (int i = 0; i < seq_length; i++)
-    {
+    {      
       if (Serial.available()) { Serial.read(); repete = 0; break; }
       if (serial_available()) { serial_read(); repete = 0; break; }
       dump_row(i);
+      read_touch();
+      if (touch > 500) break;
       play_step(i);
-      check_battery();
+      check_battery();      
     }
     if (Serial.available()) { Serial.read(); break; }
     if (serial_available()) { serial_read(); break; }
+    if (touch > 500) break;
   } while (repete);
   for (int i = 0; i < 8; i++)
     legv[i] = seq[seq_length - 1][i];
   stop_melody();
+  while (touch > 500) read_touch();
 }
 
 void load_sequence()
@@ -803,27 +1006,13 @@ void load_sequence()
   do {
     while ((!Serial.available()) && !serial_available());
     c = serial_peek();
-    if ((c == 'k') || (c == 10)) break;
+    if ((c == 'k') || (c == 10) || (c == 13)) break;
     ok = 1;
-    for (int i = 0; ok & (i < 8); i++) {
-      // CORRECT ORDER
-      int leg = i;
-      if (i == 0) leg = 0;
-      else if (i == 1) leg = 4;
-      else if (i == 2) leg = 5;
-      else if (i == 3) leg = 1;
-      else if (i == 4) leg = 2;
-      else if (i == 5) leg = 6;
-      else if (i == 6) leg = 7;
-      else if (i == 7) leg = 3;
-      if (i < 4) {
-        seq[seq_length][leg] = read_number(&ok);
-      } else {
-        seq[seq_length][leg] = 180 - read_number(&ok);
-      }
-    }
-    if (!ok) break;   
-    
+    for (int i = 0; ok & (i < 8); i++) 
+    {
+       seq[seq_length][i] = read_number(&ok);    
+      if (!ok) break;   
+    }    
     delaj[seq_length] = read_number(&ok);
     
     if (!ok) break;
@@ -837,6 +1026,8 @@ void load_sequence()
     serial_println_flash(PSTR("Failed."));
   else
     serial_println_flash(PSTR("Done."));
+  while (Serial.available()) Serial.read();
+  while (serial_available()) serial_read();
 }
 
 int read_number(uint8_t *ok)
