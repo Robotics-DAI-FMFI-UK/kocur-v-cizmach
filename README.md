@@ -1,6 +1,8 @@
 # kucur-v-cizmach
 Cat-like arduino robot with 4 legs
 
+![kocúr v čižmách](kocur_v_cizmach.jpg)
+
 list of parts:
 
 mechanical:
@@ -70,6 +72,11 @@ In edit mode, use the following keys to move all degrees of freedom:
     q  LF1 <- +      w  LB1 <- +      e  RF1 <- -      r  RB1 <- -
     a  LF2 <- +      s  LB2 -> -      d  RF2 <- -      f  RB2 -> +
     z  LF2 -> -      x  LB2 <- +      c  RF2 -> +      v  RB2 <- -
+
+
+[![Kocúr v čižmách](https://img.youtube.com/vi/T9AiIFP-OWI/0.jpg)](https://www.youtube.com/watch?v=T9AiIFP-OWI)
+
+https://www.youtube.com/watch?v=T9AiIFP-OWI
 
 
 Software:
