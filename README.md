@@ -176,6 +176,13 @@ after the use, and store them for longer term charged to about a half
 of their capacity.
 
 
+Links:
+
+*  Original project that inspired us: Baby “MIT Cheetah” opensource and 3D-printable robot by Marco (https://www.personalrobots.biz/baby-mit-cheetah-opensource-and-3d-printable-robot/)
+* Our modifications in TinkerCAD (they may change): body and head (https://www.tinkercad.com/things/c9znID17vLj-cheetah-telo), legs (https://www.tinkercad.com/things/6ybUZ9S300i-cheetah-noha)
+* Student project summer 2021: https://dai.fmph.uniba.sk/courses/dtv/index.php/Cheetah
+* Student project winter 2021: https://wiki.robotika.sk/robowiki/index.php?title=Kocur_v_Cizmach_-_Alja%C5%BE_Andol%C5%A1ek_and_Ursek_Slivsek
+
 
 contact: Pavel, pavel.petrovic at uniba.sk
 
