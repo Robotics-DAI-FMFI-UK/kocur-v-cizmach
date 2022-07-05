@@ -79,6 +79,7 @@ In edit mode, use the following keys to move all degrees of freedom:
 
 https://www.youtube.com/watch?v=T9AiIFP-OWI
 
+https://youtu.be/DKM0F1i9IDY
 
 Software:
 
