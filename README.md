@@ -1,4 +1,4 @@
-# kucur-v-cizmach
+# kocur-v-cizmach
 Cat-like arduino robot with 4 legs
 
 ![kocúr v čižmách](Kocur_v_cizmach.jpg)
