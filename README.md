@@ -21,6 +21,7 @@ electronic:
 * arduino nano strong
 * lm2596 tuned to 5V
 * HC-SR04 ultrasonic sensor
+* passive buzzer
 * KCD-11 power switch
 * cables
 * resistor divider (i.e. 5.5K + 56K) to measure bat. voltage
