@@ -60,6 +60,7 @@ Pin connections:
     A6   Touch sensor
     A7   Microphone
 
+Building instructions: https://kempelen.dai.fmph.uniba.sk/files/kocur-v-cizmach-manual/
 
 Choreographies are sequences of motor angles 0-179 8-tuples in this order: (delay is in ms and is applied 100-times per each move, typical values 1-10, e.g. 1 => the movement is spread over 100 steps, each lasting 1ms, in total about 100 ms. To change that parameter, edit play_step() function)
 
