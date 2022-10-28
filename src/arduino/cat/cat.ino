@@ -87,6 +87,8 @@ int pitch;
 int roll;
 uint8_t current_song = 1;
 uint8_t volume;
+uint8_t head_position = 90;
+
 
 uint8_t usb_active;
 uint8_t bt_active;
@@ -162,7 +164,7 @@ void react_to_multitouch(uint8_t num_touches)
               ultrasonic = 1 - ultrasonic;
               break;                
       case 10: //tenth finger moves the head
-              move_head();
+              //move_head();
               break;                
     }
 }
@@ -180,7 +182,7 @@ void react_to_tap()
 
 void react_to_mic()
 {
-  move_head();
+  //move_head();
   forward();
 }
 //----------------------------------- end of reactions code --------------------------------
@@ -618,14 +620,20 @@ void edit_mode(char c)
   else both_modes(c);
 }
 
-void move_head()
+void move_head_left()
 {
-  head.write(5);
-  delay(1000);
-  head.write(175);
-  delay(1000);
+  head.write(120);
+  delay(100);
   head.write(90);
 }
+
+void move_head_right()
+{
+  head.write(60);
+  delay(100);
+  head.write(90);
+}
+
 
 void control_mode(char c)
 {
@@ -635,7 +643,7 @@ void control_mode(char c)
   else if (c == '4') left();
   else if (c == '5') down_to_earth(); 
   else if (c == '6') sit_down();
-  else if (c == '7') move_head();
+  else if (c == '7') move_head_left();
   else if (c == '0')
   {
     //available
@@ -643,6 +651,7 @@ void control_mode(char c)
   else if (c == '8')
   {
     //available
+    move_head_right();
   }
   else if (c == 'E') 
   {
