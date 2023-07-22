@@ -17,9 +17,9 @@ electronic:
 
 * 2x plastic holder for 16500 LiIon batteries
 * 2x 16500 LiIon batteries
-* 8x mg90s servo + 1x sg90 or mg90 for head
+* 8x mg90s servo + 1x sg90 or mg90 for head (or 1x continuous servo for new version with rotating front legs)
 * arduino nano strong
-* lm2596 tuned to 5V
+* lm2596 tuned to 5V (or 2x 5V4A step-down regulator)
 * HC-SR04 ultrasonic sensor
 * passive buzzer
 * KCD-11 power switch
@@ -30,7 +30,7 @@ optional:
 
 * HC-05 compatible BT module
 * extra 5V4A power supply to avoid spurious resets
-* DfPlayer Mini and 2W 8Ohm speaker
+* DfPlayer Mini, 2W 8Ohm speaker and microSD card
 * analog microphone
 * mpu6050 gyro/accelerometer
 * capacitance touch sensor
